@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Algorithm Project</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="css/smoothness/jquery-ui-1.8.16.custom.css"
+    />
+    <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+    <script
+      type="text/javascript"
+      src="js/jquery-ui-1.8.16.custom.min.js"
+    ></script>
+    <script type="text/javascript" src="js/jquery.form.js"></script>
+    <script type="text/javascript" src="js/jquery.contextmenu.r2.js"></script>
+    <script type="text/javascript" src="js/priority_queue.js"></script>
+    <script type="text/javascript" src="js/algoritmos.js"></script>
+  </head>
+  <body>
+    <div id="main">
+      <div id="divNavegacao">
+        <h1 id="h1Nome">Algorithm Project</h1>
+
+        <div id="divMenu">
+          <h3 class="h3Menu">Tools</h3>
+          <ul id="ulMenu">
+            <li class="Menu-Item" id="menuNovo">Novo</li>
+            <li class="Menu-Item" id="menuAbrir">Abrir</li>
+            <li class="Menu-Item" id="menuSalvar"><a href="#">Salvar</a></li>
+            <li class="Menu-Item" id="menuAdicionarVertice">
+              <a href="#">Add Vertex</a>
+            </li>
+            <li class="Menu-Item" id="menuAdicionarAresta">
+              <a href="#">Adicionar Aresta</a>
+            </li>
+            <li class="Menu-Item" id="menuAdicionarArco">
+              <a href="#">Add Edge</a>
+            </li>
+            <li class="Menu-Item" id="menuMover"><a href="#">Mover</a></li>
+          </ul>
+          <br />
+          <h3 class="h3Menu">Algoritmos</h3>
+          <select id="selectAlgoritmos">
+            <option value="1">Kruskal</option>
+            <option value="2">Prim</option>
+            <option value="3">Dijkstra</option>
+          </select>
+
+          <a href="#" id="executarAlgoritmo" class="Menu-Item">Executar</a>
+          <a href="#" id="resetarGrafo" class="Menu-Item">Resetar</a>
+
+          <div id="coordenadas"></div>
+
+          <div id="autor">
+            By Thiago Nascimento
+            <br />e Yuri Adams
+          </div>
+          <div id="ano">2011</div>
+        </div>
+      </div>
+
+      <div id="divConteudo">
+        <div id="divConteudo_Main">
+          <canvas
+            id="canvas"
+            width="1100"
+            height="100%"
+            onmousemove="onMouseMove(event)"
+          >
+            Your browser does not yet support HTML5 or the Canvas tag!
+          </canvas>
+          <script type="text/javascript" src="js/canvas.js"></script>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
