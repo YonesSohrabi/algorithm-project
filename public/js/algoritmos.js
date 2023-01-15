@@ -97,9 +97,9 @@ var executarKruskal = function (graph) {
 
   var resposta = kruskal(graph);
 
-  for (var i = 0; i < graph.arestas.length; i++) {
-    graph.arestas[i].fill = "#DCDCDC";
-    graph.arestas[i].fillText = "#DCDCDC";
+  for (var i = 0; i < graph.edges.length; i++) {
+    graph.edges[i].fill = "#DCDCDC";
+    graph.edges[i].fillText = "#DCDCDC";
   }
 
   updateArestas(resposta, 0);
@@ -110,9 +110,9 @@ var executarPrim = function (graph) {
 
   var resposta = prim(graph);
 
-  for (var i = 0; i < graph.arestas.length; i++) {
-    graph.arestas[i].fill = "#DCDCDC";
-    graph.arestas[i].fillText = "#DCDCDC";
+  for (var i = 0; i < graph.edges.length; i++) {
+    graph.edges[i].fill = "#DCDCDC";
+    graph.edges[i].fillText = "#DCDCDC";
   }
 
   /*for(var i=0;i<resposta.length;i++){
@@ -121,7 +121,7 @@ var executarPrim = function (graph) {
 		aresta.fim.fill = '#D14836';
 		aresta.fill = '#D14836';
 		
-		arestaVoltando = graph.searchAresta(aresta.fim,aresta.inicio);
+		arestaVoltando = graph.searchEdge(aresta.fim,aresta.inicio);
 		if(arestaVoltando != null){
 			arestaVoltando.inicio.fill = '#D14836';
 			arestaVoltando.fim.fill = '#D14836';
@@ -137,8 +137,8 @@ var executarPrim = function (graph) {
 };
 
 var executarDijkstra = function (graph) {
-  if (graph.temArestasNegativas()) {
-    alert("Atenção! O Grafo possui arestas com pesos negativos.");
+  if (graph.temEdgesNegativas()) {
+    alert("Atenção! O Graph possui edges com pesos negativos.");
     return;
   }
 
@@ -168,10 +168,10 @@ var executarDijkstra = function (graph) {
     vertice.fill = "#D14836";
 
     if (i != 0) {
-      aresta = graph.searchAresta(vertice, graph.search(resposta[i - 1] + 1));
+      aresta = graph.searchEdge(vertice, graph.search(resposta[i - 1] + 1));
       aresta.fill = "#D14836";
 
-      arestaVoltando = graph.searchAresta(
+      arestaVoltando = graph.searchEdge(
         graph.search(resposta[i - 1] + 1),
         vertice
       );
@@ -205,10 +205,10 @@ var executarBellmanFord = function (graph) {
     vertice.fill = "#D14836";
 
     if (i != 0) {
-      aresta = graph.searchAresta(vertice, graph.search(resposta[i - 1] + 1));
+      aresta = graph.searchEdge(vertice, graph.search(resposta[i - 1] + 1));
       aresta.fill = "#D14836";
 
-      arestaVoltando = graph.searchAresta(
+      arestaVoltando = graph.searchEdge(
         graph.search(resposta[i - 1] + 1),
         vertice
       );
@@ -311,7 +311,7 @@ var updateArestas = function (resposta, i) {
   aresta.fill = "#D14836";
   aresta.fillText = "black";
 
-  arestaVoltando = graphCorrente.searchAresta(aresta.fim, aresta.inicio);
+  arestaVoltando = graphCorrente.searchEdge(aresta.fim, aresta.inicio);
   if (arestaVoltando != null) {
     arestaVoltando.inicio.fill = "#D14836";
     arestaVoltando.fim.fill = "#D14836";
@@ -427,7 +427,7 @@ var ordenacaoTopologica = function (matriz) {
   }
 
   if (temCiclo(matriz, 0)) {
-    alert("O Grafo tem ciclo!");
+    alert("O Graph tem ciclo!");
     return;
   }
 
@@ -488,7 +488,7 @@ var temCiclo_DFS = function (matriz, idVertice, marca) {
 };
 
 /**
- * http://www.professeurs.polymtl.ca/michel.gagnon/Disciplinas/Bac/Grafos/Arvores/arvores.html#Kruskal
+ * http://www.professeurs.polymtl.ca/michel.gagnon/Disciplinas/Bac/Graphs/Arvores/arvores.html#Kruskal
  */
 var kruskal = function (graph) {
   var queue = PriorityQueue({ low: true });
@@ -501,8 +501,8 @@ var kruskal = function (graph) {
     l[i].push(i);
   }
 
-  for (var i = 0; i < graph.arestas.length; i++)
-    queue.push(graph.arestas[i], graph.arestas[i].valor);
+  for (var i = 0; i < graph.edges.length; i++)
+    queue.push(graph.edges[i], graph.edges[i].valor);
 
   while (agm.length < n - 1 && !queue.empty()) {
     var aresta = queue.pop();
@@ -534,11 +534,11 @@ var kruskal_Merge = function (agm1, agm2, l) {
 };
 
 /**
- * http://www.professeurs.polymtl.ca/michel.gagnon/Disciplinas/Bac/Grafos/Arvores/arvores.html
+ * http://www.professeurs.polymtl.ca/michel.gagnon/Disciplinas/Bac/Graphs/Arvores/arvores.html
  */
 var prim = function (graph) {
   if (graph.empty()) {
-    alert("Grafo está vazio");
+    alert("Graph está vazio");
     return;
   }
 
@@ -568,7 +568,7 @@ var prim = function (graph) {
       }
     }
     T.push(
-      graph.searchAresta(graph.search(k + 1), graph.search(mais_perto[k] + 1))
+      graph.searchEdge(graph.search(k + 1), graph.search(mais_perto[k] + 1))
     );
     dist_mais_perto[k] = -1;
     for (var j = 1; j < matriz.length; j++) {
@@ -599,16 +599,16 @@ var bellmanFord = function (graph, verticeInicial, verticeFinal) {
 
   for (var i = 0; i < graph.vertices.length; i++) {
     trocou = 0;
-    for (var j = 0; j < graph.arestas.length; j++) {
+    for (var j = 0; j < graph.edges.length; j++) {
       if (
-        parseInt(distancia[graph.arestas[j].fim.id - 1]) >
-        parseInt(distancia[graph.arestas[j].inicio.id - 1]) +
-          parseInt(graph.arestas[j].valor)
+        parseInt(distancia[graph.edges[j].fim.id - 1]) >
+        parseInt(distancia[graph.edges[j].inicio.id - 1]) +
+          parseInt(graph.edges[j].valor)
       ) {
-        distancia[graph.arestas[j].fim.id - 1] =
-          parseInt(distancia[graph.arestas[j].inicio.id - 1]) +
-          parseInt(graph.arestas[j].valor);
-        pi[graph.arestas[j].fim.id - 1] = graph.arestas[j].inicio.id - 1;
+        distancia[graph.edges[j].fim.id - 1] =
+          parseInt(distancia[graph.edges[j].inicio.id - 1]) +
+          parseInt(graph.edges[j].valor);
+        pi[graph.edges[j].fim.id - 1] = graph.edges[j].inicio.id - 1;
         trocou = 1;
       }
     }
@@ -616,13 +616,13 @@ var bellmanFord = function (graph, verticeInicial, verticeFinal) {
     if (trocou == 0) break;
   }
   // usado somente para detectar ciclos negativos (dispensável)
-  for (var i = 0; i < graph.arestas.length; i++) {
+  for (var i = 0; i < graph.edges.length; i++) {
     if (
-      parseInt(distancia[graph.arestas[i].fim.id - 1]) >
-      parseInt(distancia[graph.arestas[i].inicio.id - 1]) +
-        parseInt(graph.arestas[i].valor)
+      parseInt(distancia[graph.edges[i].fim.id - 1]) >
+      parseInt(distancia[graph.edges[i].inicio.id - 1]) +
+        parseInt(graph.edges[i].valor)
     ) {
-      alert("Ciclo negativo de pesos de arestas detectado");
+      alert("Ciclo negativo de pesos de edges detectado");
       return;
     }
   }
@@ -644,7 +644,7 @@ var bellmanFord = function (graph, verticeInicial, verticeFinal) {
  * para seleção de uma cor. Então, tal vértice deveria ser colorido o mais cedo possível.
  * Isso resultara no algoritmo do Maior primeiro:
  *
- * url: http://www.professeurs.polymtl.ca/michel.gagnon/Disciplinas/Bac/Grafos/Color/color.html
+ * url: http://www.professeurs.polymtl.ca/michel.gagnon/Disciplinas/Bac/Graphs/Color/color.html
  */
 var coloracao_MaiorPrimeiro = function (graph) {
   var corDoVertice = new Array(graph.vertices.length);

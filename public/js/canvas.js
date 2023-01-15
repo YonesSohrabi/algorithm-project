@@ -38,14 +38,14 @@ function Aresta(inicio, fim, valor) {
   this.fillText = "#2D2D2D";
 }
 
-function Grafo() {
-  this.verticeSelecionado = null;
-  this.arestaSelecionada = null;
+function Graph() {
+  this.vertexSelected = null;
+  this.selectedEdge = null;
   this.vertices = [];
-  this.arestas = [];
+  this.edges = [];
 
-  this.adicionarVertice = function (valor, posX, posY) {
-    if (!this.search_porValor(valor)) {
+  this.addVertex = function (valor, posX, posY) {
+    if (!this.searchByValue(valor)) {
       var vertice = new Vertice(valor, posX / scale, posY / scale);
       this.vertices.push(vertice);
       this.update();
@@ -55,95 +55,55 @@ function Grafo() {
     return null;
   };
 
-  this.adicionarAresta_porValor = function (valorInicio, valorFim, valor) {
-    var verticeInicio = this.search_porValor(valorInicio);
-    var verticeFim = this.search_porValor(valorFim);
+  this.addEdgePerValue = function (valorInicio, valorFim, valor) {
+    var verticeInicio = this.searchByValue(valorInicio);
+    var verticeFim = this.searchByValue(valorFim);
 
     if (verticeInicio == null || verticeFim == null) {
       alert("Algum dos vértices não existem");
       return;
     }
 
-    this.adicionarAresta(verticeInicio.id, verticeFim.id, valor);
+    this.addEdge(verticeInicio.id, verticeFim.id, valor);
   };
 
   this.removerVertice = function (idVertice) {
     for (var i in this.vertices) {
       if (idVertice == this.vertices[i].id) {
         this.vertices.splice(i, 1);
-        this.removerArestas(idVertice);
+        this.removerEdges(idVertice);
         break;
       }
     }
   };
 
-  this.removerArestas = function (idVertice) {
-    for (var i = 0; i < this.arestas.length; i++) {
-      if (idVertice == this.arestas[i].inicio.id) {
-        this.arestas.splice(i, 1);
+  this.removerEdges = function (idVertice) {
+    for (var i = 0; i < this.edges.length; i++) {
+      if (idVertice == this.edges[i].inicio.id) {
+        this.edges.splice(i, 1);
         i = 0;
       }
     }
-    for (var i = 0; i < this.arestas.length; i++) {
-      if (idVertice == this.arestas[i].fim.id) {
-        this.arestas.splice(i, 1);
+    for (var i = 0; i < this.edges.length; i++) {
+      if (idVertice == this.edges[i].fim.id) {
+        this.edges.splice(i, 1);
         i = 0;
       }
     }
   };
 
-  this.removerAresta = function (aresta) {
-    for (var i in this.arestas) {
-      if (aresta == this.arestas[i]) {
-        this.arestas.splice(i, 1);
-        arestaOposta = this.searchAresta(aresta.fim, aresta.inicio);
-        if (arestaOposta != null) this.removerAresta(arestaOposta);
+  this.removerEdge = function (aresta) {
+    for (var i in this.edges) {
+      if (aresta == this.edges[i]) {
+        this.edges.splice(i, 1);
+        arestaOposta = this.searchEdge(aresta.fim, aresta.inicio);
+        if (arestaOposta != null) this.removerEdge(arestaOposta);
         break;
       }
     }
   };
 
-  this.salvar = function () {
-    var dados = '{"vertices":[';
-
-    for (var i in this.vertices) {
-      dados += '{"valor":"' + this.vertices[i].valor + '",';
-      dados += '"posx":"' + this.vertices[i].posX + '",';
-      dados += '"posy":"' + this.vertices[i].posY + '",';
-      dados += '"raio":"' + this.vertices[i].raio + '",';
-      dados += '"fill":"' + this.vertices[i].fill + '",';
-      dados += '"fillText":"' + this.vertices[i].fillText + '"';
-
-      if (i != this.vertices.length - 1) dados += "},";
-    }
-    dados += "}],";
-
-    dados += '"arestas":[';
-
-    for (var i in this.arestas) {
-      valorInicio = this.arestas[i].inicio.valor;
-      valorFim = this.arestas[i].fim.valor;
-      peso = this.arestas[i].valor;
-
-      dados +=
-        '{"verticeInicio":"' +
-        valorInicio +
-        '","verticeFim":"' +
-        valorFim +
-        '","valor":"' +
-        peso +
-        '"}';
-
-      if (i != this.arestas.length - 1) dados += ",";
-    }
-
-    dados += "]}";
-
-    $("#textAreaNovoGrafo").val(dados);
-    $("#salveForm").submit();
-  };
-
-  this.adicionarAresta = function (idInicio, idFim, valor) {
+  this.addEdge = function (idInicio, idFim, valor) {
     var inicio = this.search(idInicio);
     var fim = this.search(idFim);
 
@@ -153,7 +113,7 @@ function Grafo() {
     }
 
     var aresta = new Aresta(inicio, fim, valor);
-    this.arestas.push(aresta);
+    this.edges.push(aresta);
     this.update();
   };
 
@@ -174,7 +134,7 @@ function Grafo() {
     return null;
   };
 
-  this.search_porValor = function (valorVertice) {
+  this.searchByValue = function (valorVertice) {
     for (var i in this.vertices) {
       if (valorVertice == this.vertices[i].valor) {
         return this.vertices[i];
@@ -183,32 +143,32 @@ function Grafo() {
     return null;
   };
 
-  this.searchAresta = function (verticeInicio, verticeFim) {
-    for (var i = 0; i < this.arestas.length; i++) {
+  this.searchEdge = function (verticeInicio, verticeFim) {
+    for (var i = 0; i < this.edges.length; i++) {
       if (
-        this.arestas[i].inicio == verticeInicio &&
-        this.arestas[i].fim == verticeFim
+        this.edges[i].inicio == verticeInicio &&
+        this.edges[i].fim == verticeFim
       ) {
-        return this.arestas[i];
+        return this.edges[i];
       }
     }
 
     return null;
   };
 
-  this.searchAresta_QueSaem = function (vertice) {
+  this.searchEdgeThatLeave = function (vertice) {
     var respostas = new Array();
 
-    for (var i in this.arestas) {
-      if (this.arestas[i].inicio == vertice) {
-        respostas.push(this.arestas[i]);
+    for (var i in this.edges) {
+      if (this.edges[i].inicio == vertice) {
+        respostas.push(this.edges[i]);
       }
     }
 
     return respostas;
   };
 
-  this.verticeClicado = function (posX, posY) {
+  this.verticeClicked = function (posX, posY) {
     for (var i in graph.vertices) {
       var x = graph.vertices[i].posX * scale;
       var y = graph.vertices[i].posY * scale;
@@ -221,15 +181,15 @@ function Grafo() {
     return null;
   };
 
-  this.arestaClicada = function (posX, posY) {
+  this.edgeClicked = function (posX, posY) {
     var resposta = null;
     var areaDoTriangulo = 999999999999999;
 
-    for (var i in this.arestas) {
-      var x1 = this.arestas[i].inicio.posX;
-      var y1 = this.arestas[i].inicio.posY;
-      var x2 = this.arestas[i].fim.posX;
-      var y2 = this.arestas[i].fim.posY;
+    for (var i in this.edges) {
+      var x1 = this.edges[i].inicio.posX;
+      var y1 = this.edges[i].inicio.posY;
+      var x2 = this.edges[i].fim.posX;
+      var y2 = this.edges[i].fim.posY;
 
       var a = (y2 - y1) / (x2 - x1);
       var b = y2 - a * x2;
@@ -250,23 +210,23 @@ function Grafo() {
 
       if (d < 0.05 && area < areaDoTriangulo) {
         areaDoTriangulo = area;
-        resposta = this.arestas[i];
+        resposta = this.edges[i];
       }
     }
 
     return resposta;
   };
 
-  this.updateAresta = function () {
-    for (var i in this.arestas) {
+  this.updateEdge = function () {
+    for (var i in this.edges) {
       context.lineWidth = 1.5;
       context.beginPath();
 
-      fromx = this.arestas[i].inicio.posX;
-      fromy = this.arestas[i].inicio.posY;
+      fromx = this.edges[i].inicio.posX;
+      fromy = this.edges[i].inicio.posY;
 
-      tox = this.arestas[i].fim.posX;
-      toy = this.arestas[i].fim.posY;
+      tox = this.edges[i].fim.posX;
+      toy = this.edges[i].fim.posY;
 
       var headlen = 10; // length of head in pixels
       var angle = Math.atan2(toy - fromy, tox - fromx);
@@ -275,15 +235,13 @@ function Grafo() {
       toy = toy - 20 * Math.sin(angle);
       tox = tox - 20 * Math.cos(angle);
 
-      context.strokeStyle = this.arestas[i].fill;
+      context.strokeStyle = this.edges[i].fill;
 
       context.moveTo(fromx, fromy);
       context.lineTo(tox, toy);
 
-      if (
-        this.searchAresta(this.arestas[i].fim, this.arestas[i].inicio) == null
-      ) {
-        context.strokeStyle = this.arestas[i].fill;
+      if (this.searchEdge(this.edges[i].fim, this.edges[i].inicio) == null) {
+        context.strokeStyle = this.edges[i].fill;
 
         context.lineTo(
           tox - headlen * Math.cos(angle - Math.PI / 6),
@@ -299,26 +257,20 @@ function Grafo() {
       // context.stroke();
       //Desenha corretamente o valor em cima da aresta.
       //Com isso, o valor tambem se locomove conforme a movimentação da aresta
-      var xMedia = (this.arestas[i].inicio.posX - this.arestas[i].fim.posX) / 2;
-      var yMedia = (this.arestas[i].inicio.posY - this.arestas[i].fim.posY) / 2;
+      var xMedia = (this.edges[i].inicio.posX - this.edges[i].fim.posX) / 2;
+      var yMedia = (this.edges[i].inicio.posY - this.edges[i].fim.posY) / 2;
 
-      if (
-        xMedia >= 0 ||
-        this.arestas[i].inicio.posX <= this.arestas[i].fim.posX
-      )
+      if (xMedia >= 0 || this.edges[i].inicio.posX <= this.edges[i].fim.posX)
         xMedia *= -1;
-      if (
-        yMedia >= 0 ||
-        this.arestas[i].inicio.posY <= this.arestas[i].fim.posY
-      )
+      if (yMedia >= 0 || this.edges[i].inicio.posY <= this.edges[i].fim.posY)
         yMedia *= -1;
 
       context.font = "bold 15px Arial";
-      context.fillStyle = this.arestas[i].fillText;
+      context.fillStyle = this.edges[i].fillText;
       context.fillText(
-        this.arestas[i].valor,
-        this.arestas[i].inicio.posX + xMedia,
-        this.arestas[i].inicio.posY + yMedia
+        this.edges[i].valor,
+        this.edges[i].inicio.posX + xMedia,
+        this.edges[i].inicio.posY + yMedia
       );
 
       context.stroke();
@@ -357,13 +309,13 @@ function Grafo() {
   this.update = function () {
     this.clear();
 
-    this.updateAresta();
+    this.updateEdge();
 
     this.updateVertices();
   };
 
   this.moverVertice = function (posX, posY, event) {
-    var vertice = this.verticeClicado(posX, posY);
+    var vertice = this.verticeClicked(posX, posY);
 
     if (vertice != null) {
       document.onmousemove = function (e) {
@@ -388,9 +340,9 @@ function Grafo() {
       }
     }
 
-    for (var i in this.arestas) {
-      matriz[this.arestas[i].inicio.id - 1][this.arestas[i].fim.id - 1] =
-        this.arestas[i].valor;
+    for (var i in this.edges) {
+      matriz[this.edges[i].inicio.id - 1][this.edges[i].fim.id - 1] =
+        this.edges[i].valor;
     }
 
     return matriz;
@@ -406,9 +358,9 @@ function Grafo() {
       this.vertices[i].fillText = "white";
     }
 
-    for (var i in this.arestas) {
-      this.arestas[i].fill = "#C5C5C5";
-      this.arestas[i].fillText = "#2D2D2D";
+    for (var i in this.edges) {
+      this.edges[i].fill = "#C5C5C5";
+      this.edges[i].fillText = "#2D2D2D";
     }
 
     this.update();
@@ -418,19 +370,12 @@ function Grafo() {
     return this.vertices.length == 0;
   };
 
-  this.temArestasNegativas = function () {
-    for (var i in this.arestas) {
-      if (this.arestas[i].valor < 0) return true;
+  this.temEdgesNegativas = function () {
+    for (var i in this.edges) {
+      if (this.edges[i].valor < 0) return true;
     }
 
     return false;
-  };
-
-  this.zoom = function () {
-    for (var i in this.vertices) {
-      //this.vertices[i].posX = this.vertices[i].posX/scale;
-      //this.vertices[i].posY = this.vertices[i].posY/scale;
-    }
   };
 }
 
@@ -439,11 +384,11 @@ function onMouseDown(event) {
   if (event.button == 0) {
     if (option == 1) {
       //var valorVertice = document.getElementById("inputTexto").value;
-      graph.adicionarVertice(null, mouseX, mouseY);
+      graph.addVertex(null, mouseX, mouseY);
     } else if (option == 2) {
       graph.moverVertice(mouseX, mouseY, event);
     } else if (option == 3 || option == 4) {
-      graph.verticeSelecionado = graph.verticeClicado(mouseX, mouseY);
+      graph.vertexSelected = graph.verticeClicked(mouseX, mouseY);
     }
   }
   if (event.button == 0 || event.button == 1) esconder();
@@ -455,29 +400,27 @@ function onMouseUp(event) {
 
   if (event.button == 0) {
     if (option == 3) {
-      var verticeDestino = graph.verticeClicado(mouseX, mouseY);
+      var verticeDestino = graph.verticeClicked(mouseX, mouseY);
 
       if (verticeDestino == null) graph.update();
       else {
-        if (graph.verticeSelecionado != verticeDestino) {
-          if (
-            graph.searchAresta(graph.verticeSelecionado, verticeDestino) == null
-          ) {
-            var jaExiste = graph.searchAresta(
+        if (graph.vertexSelected != verticeDestino) {
+          if (graph.searchEdge(graph.vertexSelected, verticeDestino) == null) {
+            var jaExiste = graph.searchEdge(
               verticeDestino,
-              graph.verticeSelecionado
+              graph.vertexSelected
             );
             if (jaExiste == null) {
               var valorAresta = prompt("Valor da aresta", "2");
               if (valorAresta != null)
-                graph.adicionarAresta(
-                  graph.verticeSelecionado.id,
+                graph.addEdge(
+                  graph.vertexSelected.id,
                   verticeDestino.id,
                   valorAresta
                 );
             } else {
-              graph.adicionarAresta(
-                graph.verticeSelecionado.id,
+              graph.addEdge(
+                graph.vertexSelected.id,
                 verticeDestino.id,
                 jaExiste.valor
               );
@@ -489,26 +432,24 @@ function onMouseUp(event) {
         }
       }
 
-      graph.verticeSelecionado = null;
+      graph.vertexSelected = null;
     } else if (option == 4) {
-      var verticeDestino = graph.verticeClicado(mouseX, mouseY);
+      var verticeDestino = graph.verticeClicked(mouseX, mouseY);
 
       if (verticeDestino == null) graph.update();
       else {
-        if (graph.verticeSelecionado != verticeDestino) {
-          if (
-            graph.searchAresta(graph.verticeSelecionado, verticeDestino) == null
-          ) {
+        if (graph.vertexSelected != verticeDestino) {
+          if (graph.searchEdge(graph.vertexSelected, verticeDestino) == null) {
             var valorAresta = prompt("Valor da aresta", "2");
             if (valorAresta != null)
-              graph.adicionarAresta(
-                graph.verticeSelecionado.id,
+              graph.addEdge(
+                graph.vertexSelected.id,
                 verticeDestino.id,
                 valorAresta
               );
-            graph.adicionarAresta(
+            graph.addEdge(
               verticeDestino.id,
-              graph.verticeSelecionado.id,
+              graph.vertexSelected.id,
               valorAresta
             );
           }
@@ -519,7 +460,7 @@ function onMouseUp(event) {
       }
     }
 
-    graph.verticeSelecionado = null;
+    graph.vertexSelected = null;
   }
 }
 
@@ -535,17 +476,14 @@ function onMouseMove(event) {
   //document.getElementById("coordenadas").innerHTML="Coordinates: (" + mouseX + "," + mouseY + ")";
 
   if (option == 3 || option == 4) {
-    if (graph.verticeSelecionado != null) {
+    if (graph.vertexSelected != null) {
       graph.clear();
       context.beginPath();
-      context.moveTo(
-        graph.verticeSelecionado.posX,
-        graph.verticeSelecionado.posY
-      );
+      context.moveTo(graph.vertexSelected.posX, graph.vertexSelected.posY);
       context.lineTo(mouseX / scale, mouseY / scale);
       context.stroke();
 
-      graph.updateAresta();
+      graph.updateEdge();
 
       graph.updateVertices();
     }
@@ -574,7 +512,7 @@ function init() {
   width = canvas.width;
   height = canvas.height;
 
-  criarGrafo();
+  criarGraph();
 }
 
 function selecionarItem(elemento, opcao) {
@@ -586,8 +524,8 @@ function selecionarItem(elemento, opcao) {
   option = opcao;
 }
 
-function criarGrafo() {
-  graph = new Grafo();
+function criarGraph() {
+  graph = new Graph();
   counterIdsVertices = 1;
 }
 
@@ -649,15 +587,15 @@ $(document).ready(function () {
           return;
         }
 
-        criarGrafo();
+        criarGraph();
         graph.update();
 
-        var novoGrafo = $("#textAreaNovoGrafo").val().trim();
+        var novoGraph = $("#textAreaNovoGraph").val().trim();
 
-        var objJSON = JSON.parse(novoGrafo);
+        var objJSON = JSON.parse(novoGraph);
 
         for (var i in objJSON.vertices) {
-          vertice = graph.adicionarVertice(
+          vertice = graph.addVertex(
             parseInt(objJSON.vertices[i].valor),
             parseInt(objJSON.vertices[i].posx),
             parseInt(objJSON.vertices[i].posy)
@@ -667,11 +605,11 @@ $(document).ready(function () {
           vertice.raio = objJSON.vertices[i].raio;
         }
 
-        for (var i in objJSON.arestas) {
-          graph.adicionarAresta_porValor(
-            objJSON.arestas[i].verticeInicio,
-            objJSON.arestas[i].verticeFim,
-            objJSON.arestas[i].valor
+        for (var i in objJSON.edges) {
+          graph.addEdgePerValue(
+            objJSON.edges[i].verticeInicio,
+            objJSON.edges[i].verticeFim,
+            objJSON.edges[i].valor
           );
         }
 
@@ -692,7 +630,7 @@ $(document).ready(function () {
 
   $("#uploadForm").ajaxForm({
     beforeSubmit: function (a, f, o) {
-      $("#textAreaNovoGrafo").html("Submitting...");
+      $("#textAreaNovoGraph").html("Submitting...");
       $("#statusCarregamento").text("Submitting...");
       $("#statusCarregamento").show();
 
@@ -703,7 +641,7 @@ $(document).ready(function () {
       }
     },
     success: function (data) {
-      $("#textAreaNovoGrafo").html(data);
+      $("#textAreaNovoGraph").html(data);
       $("#statusCarregamento").text("Carregado com Sucesso!");
       arquivoCarregado = true;
     },
@@ -718,7 +656,7 @@ $(document).ready(function () {
     executarAlgoritmo(graph, $("#selectAlgoritmos").val());
   });
 
-  $("#resetarGrafo").click(function (event) {
+  $("#resetarGraph").click(function (event) {
     if (graph.empty()) {
       alert("Atenção! Nenhum graph foi criado");
       return;
